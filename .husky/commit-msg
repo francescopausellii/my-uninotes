@@ -1,0 +1,15 @@
+YELLOW='\033[1;33m'
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+NC='\033[0m'
+
+echo "🔍 Checking commit message format..."
+if ! npx --no -- commitlint --edit "$1"; then
+  echo -e "${RED}❌ Invalid commit message.${NC}"
+  echo -e "${YELLOW}🧱 Format: <type>(<scope>): <subject>${NC}"
+  echo -e "${GREEN}📌 Example: feat(auth): add user login${NC}"
+  echo "📘 See: https://www.conventionalcommits.org/"
+  exit 1
+fi
+
+echo -e "${GREEN}✅ Commit message format looks good!${NC}"
