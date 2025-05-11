@@ -8,7 +8,6 @@ export async function POST(req: NextRequest) {
     email,
     password,
   });
-  console.log("🔔 POST /api/auth/login handler running");
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 401 });
   }
