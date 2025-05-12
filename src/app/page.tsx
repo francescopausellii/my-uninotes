@@ -1,19 +1,14 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/utils/supabase/server";
+"use client";
 import LogoutButton from "@/components/logout-button";
+import { useSession } from "@/context/session-context";
 
-export default async function Home() {
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.getUser();
-
-  if (error || !data?.user) {
-    redirect("/login");
-  }
+export default function Home() {
+  const { user } = useSession();
 
   return (
-    <main className="p-4">
+    <main className="p-4 h-full">
       <p>
-        Hello <strong>{data.user.email}</strong>
+        Hello <strong>{user?.email}</strong>
       </p>
       <LogoutButton />
     </main>
