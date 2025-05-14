@@ -10,7 +10,7 @@ export default function LogoutButton() {
   const handleLogout = async () => {
     try {
       await axios.post("/api/auth/logout");
-      // client-side redirect
+
       router.push("/login");
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {

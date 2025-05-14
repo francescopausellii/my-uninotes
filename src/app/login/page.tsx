@@ -1,106 +1,62 @@
-"use client";
-
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import axios from "axios";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import LoginForm from "@/components/login-form";
 
-export default function LoginPage() {
-  const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  const handleLogin = async () => {
-    setError(null);
-
-    if (!email || !password) {
-      setError("Email e password sono obbligatorie");
-      return;
-    }
-    setLoading(true);
-
-    try {
-      const res = await axios.post("/api/auth/login", { email, password });
-      if (res.status === 200) {
-        console.log("login response:", res.status, res.data);
-        router.push("/");
-      }
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.error || "Errore di login");
-      } else {
-        setError("Si è verificato un errore durante il login");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
+export default function Page() {
   return (
-    <div className="w-full h-screen flex items-center justify-center">
-      <Card className="w-sm max-w-sm">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Login</CardTitle>
-          <CardDescription>
-            Inserisci le tue credenziali per accedere al tuo account.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="m@example.com"
-                onChange={(e) => setEmail(e.target.value.trim())}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="********"
-                onChange={(e) => setPassword(e.target.value.trim())}
-                required
-              />
-            </div>
-            <div>
-              <p className="text-sm text-red-500">{error}</p>
-            </div>
-            <Button
-              type="submit"
-              onClick={() => handleLogin()}
-              className="w-full"
-              disabled={loading}
+    <div className="h-full relative flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
+      <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex">
+        <div className="absolute inset-0 bg-secondary" />
+        <div className="relative z-20 flex items-center text-lg font-medium">
+          <Link href="/" className="flex items-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="mr-2 h-6 w-6"
             >
-              Login
-            </Button>
-            <div>
-              <Link
-                href={"/register"}
-                className="text-sm text-muted-foreground hover:underline"
-              >
-                Non hai un account? Registrati
-              </Link>
-            </div>
+              <path d="M5 3a2 2 0 0 0-2 2" />
+              <path d="M19 3a2 2 0 0 1 2 2" />
+              <path d="M21 19a2 2 0 0 1-2 2" />
+              <path d="M5 21a2 2 0 0 1-2-2" />
+              <path d="M9 3h1" />
+              <path d="M9 21h1" />
+              <path d="M14 3h1" />
+              <path d="M14 21h1" />
+              <path d="M3 9v1" />
+              <path d="M21 9v1" />
+              <path d="M3 14v1" />
+              <path d="M21 14v1" />
+            </svg>
+            My Uninotes
+          </Link>
+        </div>
+        <div className="relative z-20 mt-auto"></div>
+      </div>
+      <div className="p-8">
+        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+          <div className="flex flex-col space-y-2 text-center">
+            <h1 className="text-3xl font-bold tracking-tight">
+              Accedi a My Uninotes
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Inserisci le tue credenziali per accedere al tuo account
+            </p>
           </div>
-        </CardContent>
-      </Card>
+          <LoginForm />
+          <p className="px-6 text-center text-sm text-muted-foreground">
+            <Link
+              href="/register"
+              className="underline underline-offset-4 hover:text-primary"
+            >
+              Non hai un account? Registrati
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
