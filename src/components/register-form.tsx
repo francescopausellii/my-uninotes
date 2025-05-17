@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -8,27 +8,52 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { ErrorResponse } from "@/lib/types";
-import { zodResolver } from "@hookform/resolvers/zod";
-import axios, { AxiosError } from "axios";
-import { useRouter } from "next/navigation";
-import * as React from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import * as z from "zod";
-import { Combobox, Option } from "@/components/ui/combobox";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { ErrorResponse } from '@/lib/types';
+import { zodResolver } from '@hookform/resolvers/zod';
+import axios, { AxiosError } from 'axios';
+import { useRouter } from 'next/navigation';
+import * as React from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import * as z from 'zod';
+import { Combobox, Option } from '@/components/ui/combobox';
 
+//TODO: ADD CONNECTION TO DB TO GET UNIVERSITY NAME HERE
+const universities: Option[] = [
+  { value: '1', label: 'Università degli Studi di Perugia' },
+  { value: '2', label: 'Università degli Studi di Milano' },
+  { value: '3', label: 'Università degli Studi di Roma' },
+  { value: '4', label: 'Università degli Studi di Napoli' },
+  { value: '5', label: 'Università degli Studi di Torino' },
+  { value: '6', label: 'Università degli Studi di Bologna' },
+  { value: '7', label: 'Università degli Studi di Firenze' },
+  { value: '8', label: 'Università degli Studi di Bari' },
+];
 
-const formSchema = z.object({
-  nome: z.string().min(1, { message: "Il nome è obbligatorio." }),
-  cognome: z.string().min(1, { message: "Il cognome è obbligatorio." }),
-  email: z.string().email({ message: "Inserisci un email valida." }),
-  password: z.string().min(8, {
-    message: "La password deve contenere almeno 8 caratteri.",
-  }),
-});
+const formSchema = z
+  .object({
+    nome: z.string().min(1, { message: 'Il nome è obbligatorio.' }),
+    cognome: z.string().min(1, { message: 'Il cognome è obbligatorio.' }),
+    email: z.string().email({ message: 'Inserisci un email valida.' }),
+    password: z.string().min(8, {
+      message: 'La password deve contenere almeno 8 caratteri.',
+    }),
+    passwordConfirmation: z
+      .string()
+      .min(1, { message: 'La conferma della password è obbligatoria.' }),
+    university: z
+      .string()
+      .min(1, { message: 'Seleziona una università.' })
+      .refine((val) => universities.map((university) => university.value).includes(val), {
+        message: 'Seleziona una università valida.',
+      }),
+  })
+  .refine((data) => data.password === data.passwordConfirmation, {
+    message: 'Le password non corrispondono.',
+    path: ['passwordConfirmation'],
+  });
 
 export default function LoginForm() {
   const router = useRouter();
@@ -37,33 +62,23 @@ export default function LoginForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      nome: "",
-      cognome: "",
-      email: "",
-      password: "",
+      nome: '',
+      cognome: '',
+      email: '',
+      password: '',
+      passwordConfirmation: '',
+      university: '',
     },
   });
-
-  //TODO: ADD CONNECTION TO DB TO GET UNIVERSITY NAME HERE
-  const universities: Option[] = [
-    { value: "1", label: "Università degli Studi di Perugia" },
-    { value: "2", label: "Università degli Studi di Milano" },
-    { value: "3", label: "Università degli Studi di Roma" },
-    { value: "4", label: "Università degli Studi di Napoli" },
-    { value: "5", label: "Università degli Studi di Torino" },
-    { value: "6", label: "Università degli Studi di Bologna" },
-    { value: "7", label: "Università degli Studi di Firenze" },
-    { value: "8", label: "Università degli Studi di Bari" },
-  ]
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
 
     try {
-      await axios.post("/api/auth/register", values);
+      await axios.post('/api/auth/register', values);
 
-      toast("Registrazione effettuata");
-      router.push("/");
+      toast('Registrazione effettuata');
+      router.push('/');
     } catch (error) {
       const err = error as AxiosError<ErrorResponse>;
       toast.error(err.response?.data?.error || err.message);
@@ -75,7 +90,10 @@ export default function LoginForm() {
   return (
     <div className="grid gap-6">
       <div className="grid grid-cols-2 gap-4">
-        <Button variant="outline" onClick={() => toast.warning("Questa feature sarà presto disponibile")}>
+        <Button
+          variant="outline"
+          onClick={() => toast.warning('Questa feature sarà presto disponibile')}
+        >
           <svg
             className="mr-2 h-4 w-4"
             aria-hidden="true"
@@ -93,7 +111,10 @@ export default function LoginForm() {
           </svg>
           Google
         </Button>
-        <Button variant="outline" onClick={() => toast.warning("Questa feature sarà presto disponibile")}>
+        <Button
+          variant="outline"
+          onClick={() => toast.warning('Questa feature sarà presto disponibile')}
+        >
           <svg
             className="mr-2 h-4 w-4"
             aria-hidden="true"
@@ -124,7 +145,6 @@ export default function LoginForm() {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-
           <FormField
             control={form.control}
             name="nome"
@@ -138,7 +158,6 @@ export default function LoginForm() {
               </FormItem>
             )}
           />
-
 
           <FormField
             control={form.control}
@@ -154,7 +173,6 @@ export default function LoginForm() {
             )}
           />
 
-
           <FormField
             control={form.control}
             name="email"
@@ -168,7 +186,6 @@ export default function LoginForm() {
               </FormItem>
             )}
           />
-
 
           <FormField
             control={form.control}
@@ -185,6 +202,7 @@ export default function LoginForm() {
           />
 
           <FormField
+            control={form.control}
             name="passwordConfirmation"
             render={({ field }) => (
               <FormItem>
@@ -211,10 +229,11 @@ export default function LoginForm() {
                 </FormControl>
                 <FormMessage />
               </FormItem>
-            )} />
+            )}
+          />
 
           <Button type="submit" className="w-full text-primary-foreground" disabled={isLoading}>
-            {isLoading ? "Caricamento..." : "Registrati"}
+            {isLoading ? 'Caricamento...' : 'Registrati'}
           </Button>
         </form>
       </Form>
